@@ -3,6 +3,7 @@ import { onCleanup } from 'solid-js';
 import { createEffect } from 'solid-js';
 import { onMount } from 'solid-js';
 
+// import styles from '../../App.module.css';
 import logo from '../../logo.webp';
 
 
@@ -68,7 +69,7 @@ const navbar = () => {
             >
               <li>
                 <a
-                  href="#"
+                  href="/"
                   class="block py-2 px-3 text-white bg-pink-700 rounded md:bg-transparent md:text-pink-700 md:p-0 dark:text-white md:dark:text-pink-500"
                   aria-current="page"
                 >
@@ -77,7 +78,7 @@ const navbar = () => {
               </li>
               <li>
                 <a
-                  href="#"
+                  href="/about"
                   class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-pink-700 md:p-0 dark:text-white md:dark:hover:text-pink-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
                 >
                   About
@@ -85,7 +86,7 @@ const navbar = () => {
               </li>
               <li>
                 <a
-                  href="#"
+                  href="/services"
                   class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-pink-700 md:p-0 dark:text-white md:dark:hover:text-pink-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
                 >
                   Services
@@ -93,7 +94,7 @@ const navbar = () => {
               </li>
               <li>
                 <a
-                  href="#"
+                  href="/prices"
                   class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-pink-700 md:p-0 dark:text-white md:dark:hover:text-pink-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
                 >
                   Pricing
@@ -101,7 +102,7 @@ const navbar = () => {
               </li>
               <li>
                 <a
-                  href="#"
+                  href="/contact"
                   class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-pink-700 md:p-0 dark:text-white md:dark:hover:text-pink-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
                 >
                   Contact

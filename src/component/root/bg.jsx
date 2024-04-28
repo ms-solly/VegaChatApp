@@ -1,61 +1,64 @@
 import { createSignal, createEffect } from "solid-js";
 
 const FullScreenEmojiComponent = () => {
-  const [emojis, setEmojis] = createSignal([]);
+  // Array of emojis to display
+  const emojis = ["😀", "😎", "😊", "🤖", "🚀", "🎉", "💡", "🌟", "🍏", "🥑", "🥦", "🥕", "🌽", "🍆", "🍇", "🍓", "🥥", "🍅", "🍍", "🥭", "🥬", "🍉", "🍊", "🍋", "🍌", "🍒", "🍐", "🍎", "🥔", "🍟", "🍕", "🥪", "🌮", "🥗", "🥘", "🍝", "🍜", "🍲", "🍛", "🍱", "🍣", "🍔", "🍕", "🍩", "🍪", "🎂", "🍰", "🧁", "🥧", "🍨", "🍦", "🍧", "🍫", "🍬", "🍭", "🍮", "🍯", "☕", "🍵", "🥤", "🍹", "🍷", "🥃", "🍸", "🍴", "🍽️", "🥄", "🔪", "🥢", "🥄", "🥢", "🥡", "😎", "😀", "🤓", "👻", "🐯", "🦁", "🐱", "🐺", "🐨", "🦝", "🐰", "🦊", "🦒", "🕊", "🦚", "🐣", "🐥", "🎶"];
 
-  // Function to check if two emojis overlap
-  const emojisOverlap = (emoji1, emoji2) => {
-    const distance = Math.sqrt(Math.pow(emoji1.top - emoji2.top, 2) + Math.pow(emoji1.left - emoji2.left, 2));
-    return distance < 50; // Radius for emojis to not overlap, adjust as needed
-  };
+  // Function to calculate positions of emojis in a staggered pattern
+  const calculateGridPositions = (emojis) => {
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+    const emojiSize = 50; // Size of emojis in pixels
+    const cols = Math.floor(windowWidth / (emojiSize + 70)); // Adjust the column count based on window width and spacing
+    const rows = Math.ceil(emojis.length / cols);
+    const positions = [];
 
-  // Function to generate random emojis without overlapping
-  const generateEmojis = () => {
-    const emojiList = ["😀", "😎", "😊", "🤖", "🚀", "🎉", "💡", "🌟","🍏", "🥑", "🥦", "🥕", "🌽", "🍆","🍇", "🍓", "🥥", "🍅", "🍍", "🥭", "🥬", "🍉", "🍊", "🍋", "🍌", "🍒","🍐", "🍎", "🥔", "🍟", "🍕", "🥪", "🌮", "🥗", "🥘", "🍝", "🍜", "🍲", "🍛", "🍱", "🍣", "🍔", "🍕", "🍩", "🍪", "🎂", "🍰", "🧁", "🥧", "🍨", "🍦", "🍧", "🍫", "🍬", "🍭", "🍮", "🍯", "☕", "🍵", "🥤", "🍹",  "🍷", "🥃", "🍸", "🍴", "🍽️", "🥄", "🔪", "🥢","🥄", "🥢", "🥡","😎","😀","🤓","👻","🐯","🦁","🐱","🐺","🐨","🦝","🐰","🦊","🦒","🕊","🦚","🐣","🐥","🎶"];
-    const newEmojis = [];
+    const verticalSpacing = windowHeight / rows;
+    const horizontalSpacing = windowWidth / cols;
 
-    for (let i = 0; i < 100; i += 1) {
-      const emoji = emojiList[Math.floor(Math.random() * emojiList.length)];
-      let nextEmoji = undefined;
-      for (let attempt = 0; attempt < 20; attempt += 1) {
-        const origin = {
-          top: Math.random() * window.innerHeight,
-          left: Math.random() * window.innerWidth,
-        };
-        if (newEmojis.some((existingEmoji) => emojisOverlap(existingEmoji, origin)))
-          continue; // try another origin
-    
-        // this is a keeper
-        nextEmoji = { emoji, ...origin };
-        break;
+    // Calculate gap factor based on window dimensions and zoom level
+    const gapFactor = windowWidth > 768 ? 2 : 4; // Default gap factor
+    const zoomLevel = window.devicePixelRatio; // Get current zoom level
+
+    // Adjust gap factor based on zoom level
+    const adjustedGapFactor = gapFactor * zoomLevel;
+
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < cols; j++) {
+        const index = (i * cols + j) % emojis.length; // Repeat the emojis array
+        if (i % 2 === 0) {
+          positions.push({ top: i * verticalSpacing * adjustedGapFactor, left: j * horizontalSpacing * adjustedGapFactor });
+        } else {
+          positions.push({ top: i * verticalSpacing * adjustedGapFactor, left: (j + 0.3) * horizontalSpacing * adjustedGapFactor });
+        }
       }
-    
-      if (nextEmoji) newEmojis.push(nextEmoji);
-      else break; // it's time to stop trying
     }
-    return newEmojis;
+
+    return positions;
   };
 
-  // Effect to generate emojis on component mount
-  createEffect(() => {
-    setEmojis(generateEmojis());
+  // Array to store positions of emojis
+  const [positions, setPositions] = createSignal(calculateGridPositions(emojis));
 
-    // Regenerate emojis on window resize
+  // Effect to update positions on window resize or zoom change
+  createEffect(() => {
     const handleResize = () => {
-      setEmojis(generateEmojis());
+      setPositions(calculateGridPositions(emojis));
     };
     window.addEventListener("resize", handleResize);
-
     return () => {
       window.removeEventListener("resize", handleResize);
     };
   });
 
   return (
-    <div class="fixed inset-0 z-[-1] pointer-events-none" style={{ filter: "grayscale(100%)" }}>
-      {emojis().map((emojiObj, index) => (
-        <span class="absolute" style={{ top: emojiObj.top + "px", left: emojiObj.left + "px", fontSize: "24px"}} key={index}>
-          {emojiObj.emoji}
+    <div class="fixed inset-0 pointer-events-none z-[-1]" style={{ filter: "grayscale(100%)" }}>
+      {emojis.map((emoji, index) => (
+        <span
+          class="absolute text-sm"
+          style={{ top: positions()[index].top + "px", left: positions()[index].left + "px" }}
+        >
+          {emoji}
         </span>
       ))}
     </div>
@@ -63,3 +66,5 @@ const FullScreenEmojiComponent = () => {
 };
 
 export default FullScreenEmojiComponent;
+
+
